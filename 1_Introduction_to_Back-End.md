@@ -30,6 +30,7 @@
 
 
 ## Module 2: Introduction to HTML5 and CSS
+### HTML
 1. opening tag: `<p>`, closing tag: `</p>`, self-closing: `<br>` or `<br/>` 
 2. HTML documents structure
 ```html
@@ -84,7 +85,6 @@
     <li>List</li>
 <ol>
 
-
 <!-- Table -->
 <table>
     <!-- tr: table row -->
@@ -108,7 +108,6 @@
     <!-- input type=text is only for single line -->
     <input type="text" name="userName" />
     
-
     <!-- more input type -->
     <input type="password" /> <!-- this will mask the input text -->
     <input type="submit" /> <!-- submit button -->
@@ -134,7 +133,10 @@
 
 5. **Document object model (DOM)**: represents the HTML document element in a tree structure so that they can be used and modified by JavaScript.
 6. Web accessibility: https://www.w3.org/TR/html-aria/
-7. CSS syntax
+
+
+### CSS
+1. CSS syntax
 ```css
 /* this is a comment in css */
 /* set all <h1> color to grey */
@@ -162,7 +164,7 @@ p.introduction {
 }
 ```
 
-8. Descendant Selectors and Child Selectors
+2. Descendant Selectors and Child Selectors
 ```html
 <div id="blog">
     <h1>Latest News</h1>
@@ -196,10 +198,12 @@ p.introduction {
 }
 ```
 
-9. A special keyword called a **pseudo-class** allows developers to select elements based on their state.
+3. A special keyword called a **pseudo-class** allows developers to select elements based on their state.
     - https://developer.mozilla.org/en-US/docs/Web/CSS/CSS_pseudo-elements
-10. install VS code extension Live Preview to see html change immediately.
-11. link a CSS to HTML
+
+4. install VS code extension Live Preview to see html change immediately.
+
+5. link a CSS to HTML
 ```html
 <head>
 <!-- inside a head won't displayed in a webpage, is for web info or metadata -->
@@ -208,16 +212,18 @@ p.introduction {
 </head>
 <body>
 ```
-12. CSS color: RGB, HEX, HSL, RGBA, HSLA values, and predefined color names: 
+
+6. CSS color: RGB, HEX, HSL, RGBA, HSLA values, and predefined color names: 
     - https://www.w3schools.com/css/css_colors.asp
-13. CSS text:
+
+7. CSS text:
     1. font-family (sets a prioritized list of one or more font, incase some font is not available): 
     https://developer.mozilla.org/en-US/docs/Web/CSS/font-family
     2. size: https://developer.mozilla.org/en-US/docs/Web/CSS/font-size
     3. text-transform (specifies how to capitalize an element's text): https://developer.mozilla.org/en-US/docs/Web/CSS/text-transform
     4. text-decoration (sets the appearance of decorative lines on text): https://developer.mozilla.org/en-US/docs/Web/CSS/text-decoration
 
-14. Box model
+8. Box model
     1. https://developer.mozilla.org/en-US/docs/Learn/CSS/Building_blocks/The_box_model
     2. content > padding > border > margin
     3. `content`: https://developer.mozilla.org/en-US/docs/Learn/CSS/Building_blocks/Sizing_items_in_CSS
@@ -230,14 +236,81 @@ p.introduction {
         - `-top`, `-right`, `-bottom`, `-left`
     7. shorthand properties: https://developer.mozilla.org/en-US/docs/Web/CSS/Shorthand_properties
 
-15. Document flow: Every HTML element has a default display value. 
+9. Document flow: Every HTML element has a default display value. 
     1. A block-level element always starts on a new line. like: `<div>` `<h1>`
     2. An inline element does not start on a new line. like: `<a>` `<img>`
-    3. default display value can be change in CSS: https://developer.mozilla.org/en-US/docs/Web/CSS/display 
-16. Alignment basics
+    3. default display value can be change in CSS: https://developer.mozilla.org/en-US/docs/Web/CSS/display
+
+10. Alignment basics
     1. `text-align:` https://developer.mozilla.org/en-US/docs/Web/CSS/text-align
     2. element alignment with box model: https://www.w3schools.com/css/css_align.asp
     - `position`, `float`
 
 ## Module 3: UI Frameworks
+1. package manager for front end: Node Package Manager (npm)
+2. JavaScript bundlers: Webpack
+### Bootstrap
+1. add Bootstrap to HTML
+```html
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Bootstrap demo</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+  </head>
+  <body>
+    <h1>Hello, world!</h1>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+  </body>
+</html>
+```
+
+2. Bootstrap Layout
+    1. Breakpoint: Change style based on screen size. https://getbootstrap.com/docs/5.3/layout/breakpoints/
+    2. Containers: fundamental building block. https://getbootstrap.com/docs/5.3/layout/containers/
+    3. Grid, Columns, Rows: a system to layout and align content. https://getbootstrap.com/docs/5.3/layout/grid/
+        1. it's a twelve column system
+        2. example in "1_bootstrap"
+    4. Components: You can use many pre-build elements and styles in Bootstrap. https://getbootstrap.com/docs/5.3/components
+        1. Badge, Alert, and Button for example
+        2. example in "1_bootstrap"
+
+3. Other features
+    1. there are many other features in Bootstrap. For example, Forms, Switches, Input Groups, and Floating Labels
+    2. Check the documentation on their website at https://getbootstrap.com/docs/
+    3. there also Bootstrap themes for sale. like https://themes.getbootstrap.com/
+
+4. Other frameworks and libraries (order as the class material)
+    1. Foundation https://get.foundation/
+    2. Pure.css https://purecss.io/
+    3. Tailwind CSS https://tailwindcss.com/
+    4. UIKit https://getuikit.com/
+    5. MVP.css https://andybrewer.github.io/mvp/
+
+
+### React
+1. Static content: files just as they are stored. Dynamic content: be generated by application servers may based on user input.
+2. Web Servers use catch to reduce application servers' workload.
+3. Single page application (SPA): Only one HTML, but it can be rewritten by bundling or lazy loading (code splitting)
+4. **React**: a component-based JavaScript library for building user interfaces. It focuses on state management using virtual DOM.
+5. reconciliation process (React rewrite process)
+    1. React updates the virtual DOM 
+    2. compares virtual DOM to the previous version of the virtual DOM.
+    3. If a change has occurred, only that element is updated in the browser DOM. 
+    4. Changes on the browser DOM cause the displayed webpage to change.
+6. React design approach: component hierarchy
+    - https://react.dev/learn/thinking-in-react
+7. "React" is a library, "React Native" is a framework
+8. complementary libraries: some JavaScript libraries commonly used with React (order as the class material)
+    1. Lodash: common logic https://lodash.com/
+    2. Luxon: working with dates and times. https://moment.github.io/luxon/#/
+    3. Redux: managing application state. https://redux.js.org/
+    4. Axios: communicating with APIs https://axios-http.com/
+    5. Jest: automated tests https://jestjs.io/
+
+
 ## Module 4: Graded Assessment
+### Improve a Bio page with Bootstrap
+1. result in "1_bio_page"
