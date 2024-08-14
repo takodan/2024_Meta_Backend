@@ -72,3 +72,9 @@
 
 25. Python 函数装饰器 (RUNOOB.COM)
     - https://www.runoob.com/w3cnote/python-func-decorators.html
+
+26. Namespaces and Scope in Python (Real Python)
+    - https://realpython.com/python-namespaces-scope/
+
+27. 
+    - https://learnpython.com/blog/python-modules-packages-libraries-frameworks/

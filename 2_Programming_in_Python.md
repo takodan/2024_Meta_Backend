@@ -269,5 +269,45 @@ class Alpha():
 
 
 ## Module 4 Modules, packages, libraries and tools
+### Modules
+1. `sys.path`: list of directories that the interpreter will search in for the required module.
+2. `sys.path.append()` or `sys.path.insert()` to add a path (`sys.path` return a list).
+3. import
+```py
+import math
+import math as m
+from math import sqrt
+from math import *
+```
+4. Namespaces and Scope
+    1. `globals()` returns a reference to the current global namespace dictionary
+    2. `locals()` returns a current copy of the local namespace dictionary
+    3. An **immutable** argument can never be modified by a function.
+    4. A **mutable** argument can’t be redefined wholesale, but it can be modified in place.
+    5. to access and modify an object in the global scope `global x`
+    6. to access and modify an object in the enclosing scope `nonlocal x`
+5. example in "2_import_and_scope"
+6. reload a module
+```py
+import importlib
+importlib.reload(module_name)
+```
+### testing tools
+1. testing steps: planning -> preparation -> execution -> reporting
+2. white box, black box
+3. functional, non-functional, maintenance
+4. levels of testing:
+    1. unit/ component: tests specific individual components by isolating them. can be done when writing code
+    2. integration: combines the unit tests and tests the flow of data from one component to another.
+    3. system: Test all the software.
+    4. acceptance: This involves a few end users. Alpha, beta, and regression tests.
+5. testing early and testing frequently; the goal is early detection
+6. PyTest
+    1. `python -m pytest test.py` to run test.py with PyTest
+    2. `python -m pytest test.py::test_fn_name` to run a single function in test.py
+    3. example in "2_pytest"
+7. Test-driven development (TDD): write the test first, and then the code.
+
 ## Module 5 Graded assessment
+1. some recap
 
