@@ -58,4 +58,51 @@ ls / | grep zip # search zip in /
 
 
 ## Module 3: Git
+1. `git clone <HTTPS URL>`
+2. Git workflow: Modified -> (git add) -> Staged -> (git commit) -> Committed
+3. git command
+```bash
+git init # initialized a directory as a Git repository
+git status
+git add fine_name
+git restore --stage file_name # unstage the file
+git commit -m "commit message"
+
+git checkout -B branches/new_branch # move to branches/new_branch. -B flag will create a branch if it doesn’t exist; otherwise, reset it.
+git branch # show branches
+
+# Everything mentioned above happens locally
+
+git git push -u remote_name_origin branches/new_branch # -u flag sets source remote information for the branch you're pushing.
+git pull
+
+# link to a remote repository
+git remote -v # show remote repository. -v flag shows a remote with more detail (more verbose)
+git remote add remote_name_origin remote_url # sets remote repository for the current git
+git push remote_name_origin branch_name
+# if you added a new remote, you may also want to checkout the remote branch.
+
+# HEAD
+cat .git/branch # show reference path
+cat .git/refs/heads/main # show reference id
+
+
+# Diff
+git diff HEAD uncommited_file # compare files
+
+git log --pretty=oneline # --pretty=oneline flag shows each commit id on a separate line
+git diff id_1 id_2 # compare commits
+
+git main branches/new_branch # compare branches
+
+
+# Blame
+git blame file_name # shows: <commit_id> (<author> <date> <time> <changes_line_number>) <content>
+git blame -L start_line_number,end_line_number file_name # -L flag shows content only between start to end lins.
+git log -p commit_id # log detail of the changes
+```
+
+
 ## Module 4: Graded Assessment
+1. some recap
+2. class repo is expired
