@@ -200,5 +200,83 @@ TRUNCATE TABLE table_name;
 ```
 
 ## Module 3
+1. SQL Arithmetic operators
+```sql
+SELECT 5 - 5 = 0;
+SELECT 5 * 5 = 25;
+SELECT 5 / 5 = 1;
+SELECT 5 % 5 = 0;
+
+-- return results of "column_name1 + column_name2 + 5" for every records from table_name
+SELECT column_name1 + column_name2 + 5 FROM table_name;
+```
+
+2. SQL Comparison operators
+    1. `=`, `>`, `>=`, `<`, `<=`
+    2. `<>` or `!=` means not equal to
+```sql
+-- commonly used in WHERE
+-- retrieve all records' columns  that "column_name1 + column_name2" equal to "0"
+SELECT * 
+FROM table_name
+WHERE column_name1 + column_name2 = 0; 
+```
+
+3. SQL also has Logical operators
+    - https://www.w3schools.com/sql/sql_operators.asp
+
+4. ORDER BY clause
+    1. used for ordering or sorting data
+    2. can sorting data by multiple columns
+    3. `ASC` ascending order (default)
+    4. `DESC` descending order
+```sql
+SELECT * -- all columns
+FROM table_name -- in table table_name
+ORDER BY  column_name1 ASC, column_name2 DESC -- sorted by column_name1 ASC then column_name2 DESC
+```
+
+5. WHERE clause
+    1. used for filer data
+    2. used with operators
+```sql
+-- with Comparison operators
+WHERE column_name1 = value1
+
+-- with Logical operators
+-- return if "Country = 'USA' AND Id <20", and "Country = 'UK'"
+WHERE Country = 'USA' AND Id <20 OR Country = 'UK' ;
+
+-- return if "date_of_birth" in "2020-01-01" to "2020-12-31"
+WHERE date_of_birth BETWEEN '2020-01-01' AND '2020-12-31';
+
+-- return if "faculty" start with "Sc"
+-- ues '%' to represent multiple characters
+-- ues '_' to represent one character
+WHERE faculty LIKE 'Sc%' ;
+
+-- return if "country" in the tuple "('USA', 'UK')"
+WHERE country IN('USA', 'UK')
+```
+6. example at "4_chinook_database_customer.sql"
+
+7. SELECT DISTINCT clause
+    1. return without duplicates 
+    2. can also used for distinct combinations
+    3. `NULL` considered as unique values
+```sql
+SELECT DISTINCT column_name1
+FROM table_name;
+
+-- distinct combinations
+-- might return "1, USA", "2, USA", "1, UK", "2, UK", "NULL, USA", "1, UK" "NULL, NULL"
+SELECT DISTINCT Id, Country
+FROM customer;
+
+-- count how many unique values in column_name1
+SELECT COUNT(DISTINCT column_name1)  
+FROM table_name;
+```
+
 ## Module 4
 ## Module 5

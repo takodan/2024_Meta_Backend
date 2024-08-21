@@ -24,3 +24,6 @@
 
 9. SQL Tutorial (W3Schools)
     - https://www.w3schools.com/sql/
+
+10. SQL Operators (W3Schools)
+    - https://www.w3schools.com/sql/sql_operators.asp
