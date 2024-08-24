@@ -27,3 +27,6 @@
 
 10. SQL Operators (W3Schools)
     - https://www.w3schools.com/sql/sql_operators.asp
+
+11. What is a database schema? (IBM)
+    - https://www.ibm.com/topics/database-schema

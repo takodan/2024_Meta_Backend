@@ -100,7 +100,7 @@ DELETE FROM table_name WHERE condition;
     2. composite key: two or more attributes to form a unique value.
     3. primary key: a selected candidate key.
     4. alternate key: a candidate key not selected as the primary key.
-    5. reference a unique key in another table.
+    5. foreign key: reference a unique key in another table.
 10. Table structure<br/>
 <img src=".\4_resource\structure.webp" alt="SQL Table structure" width="50%"/>
 
@@ -129,7 +129,7 @@ DROP TABLE devices;
     2. VARCHAR: A VARIABLE length string (can contain letters, numbers, and special characters). The size parameter specifies the **maximum** column length.
 ```sql
 CREATE TABLE customers (username CHAR(9), fullName VARCHAR(100), email VARCHAR(255));
--- username CHAR(9) always occupoes 9 character's spaces
+-- username CHAR(9) always occupies 9 character's spaces
 -- fullName VARCHAR(100) only occupies as much as the character's spaces, up to 50
 SHOW TABLES;
 SHOW columns FROM customers;
@@ -142,7 +142,7 @@ SHOW columns FROM customers;
 -- Constraints
 -- NOT NULL: data fields cannot be left empty.
 -- DEFAULT: sets a default value for a column if no value is specified
-CREATE TABLE address(id INT NOT NULL, street VARCHAR(255), postcode VARCHAR(10), town VARCHAR(30)  DEFAULT"Harrow");
+CREATE TABLE address(id INT NOT NULL, street VARCHAR(255), postcode VARCHAR(10), town VARCHAR(30) DEFAULT "Harrow");
 ```
 
 4. SQL statement and syntax (MySQL)
@@ -279,4 +279,115 @@ FROM table_name;
 ```
 
 ## Module 4
+1. Schema in different DBMS
+    1. MySQL: a collection of data structures within a database
+    2. SQL server: a collection of individual, but related components (tables, fields, etc.)
+    3. PostgreSQL: a namespace with named database objects (views, indexes, etc.)
+    4. Oracle: Property of each respective database user
+2. Schema concepts
+    1. organization of data in the form of tables
+    2. relationships between the tables
+3. Schema levels ( in Entity Relationship Diagram (ER-D))
+    1. external/view: how different users want to view the data
+    2. conceptual/logical: defines entities, attributes, and relationships. developers work at this level
+    3. internal/physical: describes how the data is really stored on disk
+    4. database
+4. Entity Relationship model
+    1. main concepts
+        1. data
+        2. relationships
+        3. constraints
+    2. Relationships
+        1. table: represents a file that stores data
+        2. column/attribute: the principal storage unit
+        3. domain: a set of acceptable values that a column is allowed to contain
+        4. record/row/tuple: 
+        5. key: an attributes for uniquely identify a specific row
+        6. degree:  number of columns within a table
+        7. cardinality: number of records within a table
+    3. Constraints
+        1. key constraints
+            1. key attribute must be unique for each record
+            2. key attribute cannot have NULL values
+        2. Domain constraints
+            1. the requirement of inserting values that have a valid data type
+        3. Referential integrity constraints
+            1. based on the concept of foreign keys
+            2. a table refers to a key attribute of another table, that key attribute must exist
+5. Types of relationships:
+    1. one-to-one: a customer can only have an account
+    2. one-to-many: a customer can have multiple orders, but an order can only come from a customer
+    3. many-to-many: a customer can buy multiple items, and an item can be bought from many customers
+6. Types of keys
+    1. candidate keys: an attribute unique to each table row. It cannot be NULL.
+    2. primary key: choose from the candidate keys. It would be better to ensure that it isn't modified later.
+    3. composite primary key: a combination of multiple attributes if there isn't a single primary key.
+    4. foreign key: columns used to connect tables.
+7. Entity: an object with related attributes
+8. Types of attribute
+    1. simple: can not be classified further
+    2. composite: can be split, e.g., Name can split into First_name and Last_name
+    3. single-valued
+    4. multi-valued: can store multiple values, should be avoided in a relational database
+    5. derived: can be derived from another attribute, e.g., Age can be derived from Birth
+    6. Key
+
+9. Database normalization
+    1. the goal is to minimize database challenges
+    2. it's a process for structuring tables 
+    3. minimize data duplications
+    4. avoid errors during data modifications
+    5. simplify data queries from the database
+    6. creating each table with a single purpose
+
+10. common database challenges/anomalies
+    1. Insert anomaly: the insertion of one record leads to the insertion of several more required data sets.
+    2. Update anomaly: updating data in one column requires updates in multiple others.
+    3. Deletion anomaly: deletion of one record leads to the deletion of several more required data sets.
+
+11. Database normalization form
+    1. First normal form (1NF)
+        1. enforce the data atomicity rule and eliminate unnecessary repeating data groups
+        2. data atomicity: one single instance value of the column attribute in any field (one value per field)
+        3. for example
+            1. include `Tutors` in the `Courses Table` may have repeating data groups since a `Tutor` can tutor multiple `Courses`
+            2. split the `Courses Table` into `Tutors Table` and `Course Table`, then connect they by foreign key
+            3. a `Tutor` in the `Tutors Table` may have multiple values in `Contact infos` column
+            4. split the `Contact infos` column to the `phone` column and the `email` column
+    2. Second normal form (2NF)
+        1. a table dependency should be functional, not partial.
+        2. functional dependency: each column in the table is functionally dependent on the primary key.
+        3. partial dependency: a table with a composite primary key means.
+    3. Third normal form (3NF)
+        1. an attribute dependency should not have a transitive dependency.
+        2. transitive dependency: a non-key attribute in the table may not be functionally dependent on another non-key attribute in the same table
+        3. for example
+            1. the `Postcode` column attributes are functionally dependent on the `City`
+            2. changing the value of the `City` in the table has a direct impact on the `Postcode` value
+            3. separate the `Postcode` from the table to avoid transitive dependency
+12. Database normalization form example
+
+<img src=".\4_resource\data_normalization.png" alt="Data Normalization Example" width="50%"/>
+
 ## Module 5
+1. Quiz
+```sql
+CREATE DATABASE SportsClub;
+CREATE TABLE Players (
+    playerID INT, playerName VARCHAR(50), age INT, PRIMARY KEY(playerID)
+);
+
+INSERT INTO Players (playerID, playerName, age) VALUES (1, "Jack", 25);
+SELECT playerName FROM Players WHERE playerID = 2;
+SELECT playerName FROM Players;
+UPDATE Players SET age = 22 WHERE playerID = 3;
+DELETE FROM Players WHERE playerID = 4;
+SELECT playerID % 2 FROM Players;
+SELECT name FROM Players WHERE age > 25;
+
+CREATE TABLE Course( 
+ courseID int NOT NULL, courseName VARCHAR(50), PRIMARY KEY (courseID), 
+   FOREIGN KEY (departmentID) REFERENCES Department (departmentID)
+);  
+
+```
