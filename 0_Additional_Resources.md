@@ -127,3 +127,18 @@
 - https://docs.djangoproject.com/en/5.1/topics/class-based-views/
 3. django render
 - https://docs.djangoproject.com/en/5.1/topics/http/shortcuts/#render
+4. django urls
+- https://docs.djangoproject.com/en/5.1/ref/urls/
+5. django URL dispatcher
+- https://docs.djangoproject.com/en/5.1/topics/http/urls/#url-dispatcher
+6. django How Django processes a request
+- https://docs.djangoproject.com/en/5.1/topics/http/urls/#how-django-processes-a-request
+7. django Using regular expressions
+- https://docs.djangoproject.com/en/5.1/topics/http/urls/#using-regular-expressions
+8. django Mapping URLs to views
+- https://docs.djangoproject.com/en/5.1/topics/http/views/#mapping-urls-to-views
+9. django forms
+- https://docs.djangoproject.com/en/5.1/topics/forms/
+10. django Request and response objects
+- https://docs.djangoproject.com/en/5.1/ref/request-response/
+

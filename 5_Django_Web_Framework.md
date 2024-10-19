@@ -378,5 +378,86 @@ def index(request):
         ```
         4. The form data that the user posts becomes part of the request body.
         5. The view function passes these body parameters from the request.POST dictionary-like attribute.
-11. 
-    - 
+
+11. Regular expressions in URLs
+    1. RegEx cheat sheet
+    - https://developer.mozilla.org/en-US/docs/Web/JavaScript/Guide/Regular_expressions/Cheatsheet
+    2. Example
+    ```py
+    from django.urls import path, re_path
+    from . import views
+    urlpatterns = [
+        path("menu_item/10", views.display_menu)
+        path(r"^menu_item/([0-9]{2})/$", views.dispaly_menu_)
+    ]
+    ```
+
+12. Error handling
+    - https://developer.mozilla.org/en-US/docs/Web/HTTP/Status
+    1. common error code
+        1. 400 Bad Request
+        2. 403 Forbidden:
+        3. 404 Not Found
+        4. 500 Internal Server Error
+    2. customize the look of these views
+
+13. URL Namespacing
+    1. A namespace is needed if the view function of the same name is defined in more than one app
+    2. The application namespace is created by defining app_name variable in the application's urls.py.
+    ```py
+    #demoapp/urls.py
+    from django.urls import path  
+    from . import views    
+    app_name='demoapp' 
+    urlpatterns = [  
+        path('', views.index, name='index'),      
+    ] 
+    ```
+    ```py
+    #newapp/urls.py 
+    from django.urls import path 
+    from . import views 
+    app_name='newapp' 
+    urlpatterns = [ 
+        path('', views.index, name='index'), 
+    ] 
+    ```
+    3. The Instance namespace is used the `namespace` parameter in the `include()` function.
+    ```py
+    #in demoproject/urls.py 
+    urlpatterns=[ 
+        # ... 
+        path('demo/', include('demoapp.urls', namespace='demoapp')), 
+        # ... 
+    ]
+    ```
+    4.  url tag and namespace
+        1. Use the url tag to obtain the URL path dynamically
+        ```html
+        <form action="{% url 'login' %}" method="POST"> 
+            {% csrf_token %} 
+            <p>UserID: <input type="text" name="id"></p> 
+            <input type="submit"> 
+        </form>
+        ```
+        2. use namespace to find the specific view in the app
+        ```html
+        <form action="{% url 'demoapp:login' %}" method="post"> 
+            {% csrf_token %} 
+            <p>UserID: <input type="text" name="id"></p> 
+            <input type="submit"> 
+        </form> 
+        ```
+
+14. Class based views (again)
+```py
+from django.views import View 
+class MyView(View): 
+    def get(self, request): 
+        # logic to process GET request
+        return HttpResponse('response to GET request') 
+ 
+    def post(self, request): 
+        # <logic to process POST request> 
+        return HttpResponse('response to POST request') 
+```
