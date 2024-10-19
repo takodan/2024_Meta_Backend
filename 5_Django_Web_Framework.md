@@ -62,7 +62,7 @@
     'django.contrib.messages', 
     'django.contrib.staticfiles',
  
-    'app_name', 
+    'app_name.apps.MyappConfig', 
     ] 
     ```
 
@@ -174,3 +174,209 @@
     
     </body>
     ```
+
+
+## Module 2 views
+1. Views: take a request and return a response
+```py
+from django.http import HttpResponse
+
+# function doesn't matter to django
+def home(request):
+    content = "<html><body><h1>Hello World</h1></body></html>"
+    return HttpResponse(content)
+```
+2. Routing: The view function needs to be mapped to a URL in `urls.py`
+    1. best practice
+    ```py
+        # urls.py in app
+        from django.urls import path 
+        from . import views
+        urlpatterns = [
+            path('url_path/', views.function_name, name = "function_name")
+        ]
+    ```
+    ```py
+        # urls.py in project
+        from django.contrib import admin 
+        from django.urls import include, path 
+
+        urlpatterns = [ 
+            path('admin/', admin.site.urls),
+            path('url_path/', include('app.urls')), 
+        ] 
+    ```
+3. Function based views
+```py
+def view_name(request):  
+
+      if request.method=='GET':  
+            #perform read or delete operation on the model  
+
+      if request.method=='POST':  
+            #perform insert or update operation on the model  
+            context={ } #dict containing data to be sent to the client  
+
+      return render(request, 'mytemplate.html', context) 
+```
+4. Class based views
+```py
+from django.views import View 
+class MyView(View): 
+    def get(self, request): 
+        # logic to process GET request
+        return HttpResponse('response to GET request') 
+ 
+    def post(self, request): 
+        # <logic to process POST request> 
+        return HttpResponse('response to POST request') 
+```
+5. `django.views.generic` module contains several generic view classes that provide the functionality required to perform certain tasks.
+6. HTTP
+    - https://developer.mozilla.org/en-US/docs/Web/HTTP
+    1. request
+        - https://developer.mozilla.org/en-US/docs/Web/HTTP/Session#example_requests
+        ```
+        GET / HTTP/1.1
+        Host: developer.mozilla.org
+        Accept-Language: fr
+        ```
+        1. request method
+            1. GET: retrieve
+            2. POST: send
+            3. PUT: update
+            4. DELETE: remove
+        2. request header
+        - https://developer.mozilla.org/en-US/docs/Glossary/HTTP_header
+    2. response
+        - https://developer.mozilla.org/en-US/docs/Web/HTTP/Session#example_responses
+        ```
+        HTTP/1.1 200 OK
+        Content-Type: text/html; charset=utf-8
+        ```
+        1. status code
+        - https://developer.mozilla.org/en-US/docs/Web/HTTP/Status
+
+7. request in Django view
+    - https://docs.djangoproject.com/en/5.1/ref/request-response/
+    1. `request.method`: HTTP methods
+    ```py
+    if request.method == 'GET': 
+        do_something() 
+    elif request.method == 'POST': 
+        do_something_else_if()
+    ```
+    2. `request.GET` and `request.POST`: A dictionary-like object containing all given method parameters
+    3. `request.COOKIES`: A dictionary containing all cookies.
+    4. `request.FILES`: A dictionary-like object containing all uploaded files.
+    5. `request.user`: An object of django.contrib.auth.models.User class.
+    ```py
+    if request.user.is_authenticated(): 
+        # Do something for logged-in users. 
+    else: 
+        # Do something for anonymous users. 
+    ```
+    6. `request.has_key()`: It check whether the GET or POST parameter dictionary has a value for the given key.
+
+8. response in Django view
+```py
+from django.http import HttpResponse 
+from django.template import loader 
+def index(request): 
+    template = loader.get_template('app_name/index.html') 
+    context={}  
+    return HttpResponse(template.render(context, request))
+```
+
+9. URLs
+    - https://developer.mozilla.org/en-US/docs/Learn/Common_questions/Web_mechanics/What_is_a_URL#basics_anatomy_of_a_url
+    1. `https://www.example.com.uk/home/2024/summer/`
+    2. Scheme: protocol `https://`
+    3. Subdomain: `www`
+    4. Second-level domain: `example`
+    5. Top-level domain: category and country `com` `uk`
+    6. File path: `home
+    7. URL parameters: `2024` `summer`
+    8. Query strings: `?year=2024&menu=summer`
+
+10. parameters in Django
+    1. Path parameter example: `http://127.0.0.1:8000/request_info/menu/pizza/30`
+    ```py
+    def menu(request, item, price):
+        content = f"Item: {item} Price: {price}"
+        return HttpResponse(content, content_type='text/html', charset='utf-8')
+    ```
+    ```py
+    # urls.py in app.
+    urlpatterns = [
+        path('', views.request_info, name = "request_info"),
+        path('menu/<item>/<price>', views.menu, name = "menu")
+    ]
+    ```
+    ```py
+    # urls.py in project.
+    urlpatterns = [
+        path('', include('practice_http.urls')),
+    ]
+    ```
+    2. path converter: Django parses the received value to the string type by default.
+    ```py
+    # urls.py in app.
+    urlpatterns = [
+        path('menu/<str:item>/<int:price>', views.menu, name = "menu")
+    ]
+    ```
+    - https://docs.djangoproject.com/en/5.1/topics/http/urls/#path-converters
+    3. Query parameter example: `http://127.0.0.1:8000/request_info/qryMenu/?item=egg&price=100`
+    ```py
+    def qry_menu(request): 
+        item = request.GET['item'] 
+        price = request.GET['price']
+        content = f"Item: {item} Price: {price}"
+        return HttpResponse(content, content_type='text/html', charset='utf-8') 
+    ```
+    ```py
+    # urls.py in app.
+    urlpatterns = [
+        path('', views.request_info, name = "request_info"),
+        path('qryMenu/', views.qryMenu, name = "qryMenu"),
+    ]
+    ```
+    ```py
+    # urls.py in project.
+    urlpatterns = [
+        path('', include('practice_http.urls')),
+    ]
+    ```
+    4. Body parameters example:
+        1. create a template `form.html`
+        ```html
+        <form action="/getform/" method="POST"> 
+            {% csrf_token %} 
+            <p>Name: <input type="text" name="id"></p> 
+            <p>UserID :<input type="name" name="name"></p> 
+            <input type="submit"> 
+        </form> 
+        ```
+        2. modify `views.py`
+        ```py
+        def showform(request): 
+            return render(request, "form.html") 
+
+        def getform(request): 
+            if request.method == "POST": 
+                id=request.POST['id'] 
+                name=request.POST['name'] 
+            return HttpResponse("Name:{} UserID:{}".format(name, id)) 
+        ```
+        3. modify `urls.py` at app level
+        ```py
+        urlpatterns = [
+            path('showform/', views.showform, name = "showform"),
+            path("getform/", views.getform, name='getform'),
+        ]
+        ```
+        4. The form data that the user posts becomes part of the request body.
+        5. The view function passes these body parameters from the request.POST dictionary-like attribute.
+11. 
+    - 
