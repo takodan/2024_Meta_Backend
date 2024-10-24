@@ -50,7 +50,7 @@
 
 7. Create a Django app
     ```bash
-        python manage.py startapp app_name app_dir
+    python manage.py startapp app_name app_dir
     ```
     1. Update `settings.py` after created an app
     ```py
@@ -461,3 +461,336 @@ class MyView(View):
         # <logic to process POST request> 
         return HttpResponse('response to POST request') 
 ```
+
+</br>
+
+## Module 3 Models
+### Models & Migrations
+1. Models Example
+    1. in SQL
+    ```sql
+    CREATE TABLE user(
+        "id" serial NOT NULL PRIMARY KEY,
+        "first_name" varchar(30) NOT NULL,
+        "last_name" varchar(30) NOT NULL
+    );
+    ```
+    2. in Django models
+    ```py
+    from django.db import models
+    class User(models.Model):
+        # no need to define primary key
+        first_name = models.CharField(max_length=30)
+        last_name = models.CharField(max_length=30)
+    ```
+2. CURD in Django
+    1. in SQL
+    ```sql
+    INSERT INTO user(id, first_name, last_name)
+    VALUES (1, "John", "JJones");
+
+    SELECT * FORM user WHERE id = 1;
+
+    UPDATE user
+    SET last_name = "Smith"
+    WHERE id = 1;
+
+    DELETE FROM user WHERE id = 1;
+    ```
+    2. in Django models
+    ```py
+    new_user= User(id=1, "John", "Jones")
+    new_user.save()
+
+    user = USER.objects.get(id=1)
+
+    user = USER.objects.get(id=1)
+    user.last_name = "Smith"
+    user.save()
+
+    User.objects.filer(id=1).delete()
+    ```
+
+3. Creating models
+    1. add models object in "models.py" under the app
+    2. add the app into the project "settings.py"
+    ```py
+    INSTALLED_APPS = [
+    'app_name.apps.app_nameConfig'
+    ]
+    ```
+    3. create the migrations script and apply the migrations
+    ```
+    python manage.py makemigrations
+    python manage.py migrate
+    ```
+    4. then you can access the table through models
+    5. you can also create custom function in models class
+
+4. Migrations
+    1. django implements models to the database schema
+    2. `makemigrations`: Creates new migration files based on the changes made to the models in your Django app.
+    3. `migrate`: Applies the migrations to the database, syncing the database schema with the current state of your models.
+    ```bash
+    # preview the migration operations without actually applying them
+    python manage.py migrate --plan
+    # revert the database schema to the specific migration
+    python manage.py migrate app_name 0001
+    ```
+    4. `sqlmigrate` :Displays the SQL statements that will be run for a specific migration.
+    5. `showmigrations`: Lists all migrations and their current status (whether they've been applied or not).
+
+5. Registering models
+    1. make models available in the Django admin interface
+    2. admin.py file in the app
+    ```py
+    from django.contrib import admin
+    from .models import Model_name
+
+    admin.site.register(Model_name)
+    ```
+
+6. Foreign Keys in Django Example
+    1. on_delete:
+        1. CASCADE: deletes the object containing the ForeignKey
+        2. PROTECT: Prevent deletion of the referenced object.
+        3. RESTRICT: Prevent deletion of the referenced object by raising RestrictedError
+```py
+class DrinksCategory(models.Model):
+    category_name = models.CharField(max_length = 200)
+
+class Drinks(models.Model):
+    drink = models.CharField(max_length = 100)
+    price = models.IntegerField()
+    category_id = models.ForeignKey(DrinksCategory, on_delete = models.PROTECT, default = None relate_name = ")
+```
+
+7. Object Relationship Mapping (ORM)
+    1. Django use ORM to interact with SQL
+    2. you can also use Model.object to interact with SQL
+    - https://docs.djangoproject.com/en/4.1/topics/db/queries/#retrieving-objects
+
+</br>
+
+### Models & Form
+1. Form 
+    1. Form class Example
+    ```py
+    from django import form
+    class NameForm(form.Form):
+        yourName = forms.CharField(label="Your name", max_length=100)
+    ```
+    2. Form fields
+        1. CharField
+        ```py
+        name = forms.CharField(widget=forms.Textarea(attrs={"rows":5}))
+        ```
+        2. EmailField
+        ```py
+        email = forms.EmailField(label="Enter email address")
+        ```
+        3. DateField
+        ```py
+        date = forms.DateField(widget=NumberInput(attrs={"type":"date"}))
+        ```
+        4. ChoiceField
+        ```py
+        iterable_name = (
+            ("a", "AAA"),
+            ("B", "BBB"),
+        )
+
+        choice = forms.ChoiceField(widget=forms.RadioSelect,choices=iterable_name)
+        ```
+        5. IntegerField
+        ```py
+        num = forms.IntegerField(min_value=20, max_value=60)
+        ```
+        6. MultipleChoiceField
+        7. FileField
+        ```py
+        upload = forms.FileField(upload_to ='uploads/')
+        ```
+        8. ImageField
+    3. common fields argument
+        1. required: True by default
+        2. label
+        3. initial: initial value
+        4. help_text
+    
+2. ModelForm Example
+    1. create a model in models.py
+    ```py
+    # Create your models here.
+    class Booking(models.Model):
+        first_name = models.CharField(max_length = 200)
+        last_name = models.CharField(max_length = 200) 
+        guest_count = models.IntegerField()
+        reservation_time = models.DateField(auto_now=True)
+        comments = models.CharField(max_length = 1000)
+
+        # return first_name instead of object name
+        def __self__(self):
+            return self.first_name
+    ```
+    2. register the model in admin.py
+    ```py
+    # Register your models here.
+    from .models import Booking
+
+    admin.site.register(Booking)
+    ```
+    3. create the forms.py in the myapp directory 
+    4. create a form in forms.py
+    ```py
+    from django import forms
+    from .models import Booking
+
+    class BookingForm(forms.ModelForm):
+        class Meta:
+            model = Booking
+            field = "__all__"
+    ```
+    5. create the templates directory
+    6. create the template name booking.html
+    ```html
+    <p> Booking for Little Lemon ! </p>
+
+    <form action = "" method = "post", style="background-color: #E0E0E2;">
+        {% csrf_token %}
+        {{ form.as_p }}
+        <input type="submit" value="Submit">
+    </form>
+    ```
+    6. create a view in views.py
+    ```py
+    from app_name.forms import BookingForm
+
+    def form_view(request):
+        form = BookingForm()
+        if request.method == 'POST':
+            form = BookingForm(request.POST)
+            if form.is_valid():
+                form.save()
+        context = {"form" : form}
+        return render(request, "booking.html", context)
+    ```
+    7. create url in urls.py
+    ```py
+    from . import views
+    urlpatterns = [
+        path('booking/', views.form_view),
+    ]
+    ```
+    8. add AppNameConfig into project settings.py
+    ```py
+    INSTALLED_APPS = [
+        'app_name.apps.AppNameConfig',
+    ]
+    ```
+    9. do the migrations
+    ```bash
+    python manage.py makemigrations
+    python manage.py migrate
+    ```
+
+3. Admin
+    1. Create a superuser 
+        1. `python manage.py createsuperuser`
+        2. enter username, email and password
+        3. User creation can be performed through either the admin page or the command shell interface. 
+    2. The admin page allows you to manage users, permissions, and databases.
+    3. Django user classifications
+        1. superuser
+        2. staff user: can access the admin interface, but no operations are allowed by default.
+        3. user: can't access the admin interface
+
+### Database options
+1. Setting up a MySQL
+    1. install MySQL
+    2. enter MySQL `mysql -u root -p`
+    3. create a database for the project `Create database mydatabase;`
+    4. create a MySQL user for the project 
+    5. exit MySQL  `exit`
+    6. install database client for python `pip3 install mysqlclient`
+    7. enable MySQL in django project setting.py
+    - https://docs.djangoproject.com/en/5.1/ref/settings/#databases
+    8. run migrations
+        ```bash
+            python3 manage.py makemigrations
+            python3 manage.py migrate
+        ```
+
+## Module 4 Template
+1. use template in django
+    1. create a HTML template
+    2. create a view with template in views.py
+    - `return render(request, 'template_path.html', {"key":"value_for_template"})`
+    3. update urls.py
+    4. update settings.py
+        1. add app into `INSTALLED_APPS` list
+        1. add template directory path into `TEMPLATES` list
+2. create a template
+    1. in views.py
+    - `return render(request, 'template_path.html', {"key":"value_for_template"})`
+    2. in HTML, `{{key}}` will be replace after rendering
+    - `{{key}}` > `value_for_template`
+    3. to add file (like an image)
+        1. add a list call `STATICFILES_DIRS`
+        2. add static file directory path into the list
+        3. add `{% load static %}`at the beginning of the HTML
+        4. add <img src="{% static 'img/dessert.jpg' %}">
+
+3. Django Template Language components
+    - https://docs.djangoproject.com/en/5.1/ref/templates/language/
+    1. Variable: `{{ variable }}`
+    2. Filters: for modify variables, e.g.,`{{ name|lower }}`
+    3. Tags: `{% tag %}`, e.g., `{% if expression %}` `{% else %}` `{% endif %}`; `{% for i in iterable %}` `{% endfor %}`
+    4. Comments: `{# comments #}`
+
+4. Template inheritance
+    1. include: it insert another template within the current template
+    ```html
+    <!-- navbar.html -->
+    <nav>
+    <ul>
+        <li><a href="/">Home</a></li>
+        <li><a href="/about/">About</a></li>
+        <li><a href="/contact/">Contact</a></li>
+    </ul>
+    </nav>
+    ```
+    ```html
+    <!-- base.html -->
+    <html>
+    <head>
+        <title>My Website</title>
+    </head>
+    <body>
+        <!-- Include the navigation bar -->
+        {% include 'navbar.html' %}
+        
+        <div>
+            {% block block_name %}
+            <!-- Content will go here -->
+            {% endblock %}
+        </div>
+    </body>
+    </html>
+    ```
+    2. extends: it inherits the base template's structure and can customize blocks content.
+    ```html
+    <!-- home.html -->
+    <!-- extends from base.html -->
+    {% extends 'base.html' %}
+
+    <!-- add content in block -->
+    {% block block_name %}
+        <h1>Welcome to My Website</h1>
+        <p>This is the homepage content.</p>
+    {% endblock %}
+    ```
+
+
+
+

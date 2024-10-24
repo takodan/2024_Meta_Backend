@@ -141,4 +141,7 @@
 - https://docs.djangoproject.com/en/5.1/topics/forms/
 10. django Request and response objects
 - https://docs.djangoproject.com/en/5.1/ref/request-response/
-
+11. Django Tutorial Part 3: Using models (Mozilla)
+- https://developer.mozilla.org/en-US/docs/Learn/Server-side/Django/Models
+12. django authentication system
+- https://docs.djangoproject.com/en/5.1/topics/auth/default/
