@@ -145,3 +145,9 @@
 - https://developer.mozilla.org/en-US/docs/Learn/Server-side/Django/Models
 12. django authentication system
 - https://docs.djangoproject.com/en/5.1/topics/auth/default/
+
+</br>
+
+# 6_APIs
+1. Django Snippets for VS code
+- https://marketplace.visualstudio.com/items?itemName=thebarkman.vscode-djaneiro
