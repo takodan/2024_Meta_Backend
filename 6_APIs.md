@@ -59,11 +59,13 @@
     6. Mockapi: create mock API endpoints
 
 5. Create a Django project using pipenv
-     1. `pipenv install {django}`
-     2. `pipenv shall`
-     3. `django-admin startproject {projectname} {.}`
-     4. `python manage.py startapp {appname}`
-     5. `python manage.py runserver {port}`
+    1. `pipenv install {django}`
+    2. `pipenv shall`
+    3. `django-admin startproject {projectname} {.}`
+    4. `python manage.py startapp {appname}`
+    5. `python manage.py runserver {port}`
+    6. `python manage.py makemigrations`
+    7. `python manage.py migrate`
 
 6. REST best practices
     1. KISS (Keep it simple stupid)
@@ -228,3 +230,341 @@
             'app',
         ]
         ```
+
+
+
+## Module 2 Django Rest Framework (DRF)
+1. DRF is a toolkit for building Web APIs on top of Django.
+2. DRF features
+    1. Serialization and Deserialization
+    2. Request and Response Handling
+    3. API Viewer: to test HTTP methods
+    4. ViewSet Classes: CRUD view sets
+    5. Authentication
+3. Installing DRF
+    1. `pipenv install django`
+    2. `pipenv shell`
+    3. `django-admin startproject projectname .`
+    4. `python manage.py startapp appname`
+    5. `pipenv install djangorestframework`
+    6. add DRF in settings.py
+        ```py
+            INSTALLED_APPS = [
+                'rest_framework',
+            ]
+        ```
+    7. use DRF in app
+4. DRF api_view decorators
+    1. Example: converts the django function view into an API view
+    ```py
+    # views.py
+    from django.shortcuts import render
+    from rest_framework.response import Response
+    from rest_framework import status
+    from rest_framework.decorators import api_view
+
+    @api_view()
+    def books(request):
+        return Response('list of the books', status=status.HTTP_200_OK)
+    ```
+    2. Example: Defines allowed methods with decorators
+    ```py
+    @api_view(['GET', 'POST'])
+    def books(request):
+        if request.method == 'GET':
+            return Response('List of books', status=status.HTTP_200_OK)
+        elif request.method == 'POST':
+            return Response('Book created', status=status.HTTP_201_CREATED)
+    ```
+5. Class-based views in DRF
+    1. Example
+    ```py
+    # views.py
+    from django.shortcuts import render
+    from rest_framework.response import Response
+    from rest_framework import status
+    from rest_framework.view import APIview
+    class BookList(APIView):
+        def get(self, request):
+            return Response({"message":'list of the books'}, status=status.HTTP_200_OK)
+    ```
+    ```py
+    # urls.py at app level
+    from . import views
+    urlpatterns = [
+        path('books', views.BookList.as_view())
+    ]
+    ```
+
+6. DRF built-in class-based views: ViewSets
+    1. ViewSets
+    ```py
+    # views.py
+    from rest_framework import viewsets
+
+    Class BookView(viewsets.ViewSet):
+        def list(self, request):
+        	return Response({"message":"All books"}, status.HTTP_200_OK)
+        def create(self, request):
+        	return Response({"message":"Creating a book"}, status.HTTP_201_CREATED)
+        def update(self, request, pk=None):
+        	return Response({"message":"Updating a book"}, status.HTTP_200_OK)
+        def retrieve(self, request, pk=None):
+        	return Response({"message":"Displaying a book"}, status.HTTP_200_OK)
+        def partial_update(self, request, pk=None):
+            return Response({"message":"Partially updating a book"}, status.HTTP_200_OK)
+        def destroy(self, request, pk=None):
+        	return Response({"message":"Deleting a book"}, status.HTTP_200_OK)
+    ```
+
+    2. ViewSets routing 
+    ```py
+    # urls.py at app level
+    from . import views
+    urlpatterns = [
+        # access the `api/books` endpoint with GET and POST methods.
+        path('books', views.BookView.as_view(
+        	{
+            	'get': 'list',
+            	'post': 'create',
+        	})
+        ),
+        # access the `api/books/{pk}` endpoint with GET, PUT, PATCH and DELETE methods.
+        path('books/<int:pk>',views.BookView.as_view(
+        	{
+            	'get': 'retrieve',
+            	'put': 'update',
+            	'patch': 'partial_update',
+            	'delete': 'destroy',
+        	})
+        )
+    ]
+    ```
+
+    3. ViewSets routing with SimpleRouter class
+    ```py
+    from rest_framework.routers import SimpleRouter
+
+    # `trailing_slash=False` for remove slash at the end of url
+    router = SimpleRouter(trailing_slash=False)
+    router.register('books', views.BookView, basename='books')
+    urlpatterns = router.urls
+    ```
+
+    4. ViewSets routing with DefaultRouter class: It creates an API root endpoint (with a trailing slash).
+    ```py
+    from rest_framework.routers import DefaultRouter
+    router = DefaultRouter(trailing_slash=False)
+    router.register('books', views.BookView, basename='books')
+    urlpatterns = router.urls
+    # you can access the API root view by you visit `api/` endpoint
+    ```
+
+    5. ModelViewSet: include list, retrieve, create, update, and destroy (No need to define methods manually)
+    ```py
+    from rest_framework import viewsets
+    from .models import Book
+    from .serializers import BookSerializer
+
+    class BookViewSet(viewsets.ModelViewSet):
+        queryset = Book.objects.all()
+        serializer_class = BookSerializer
+    ```
+    6. ReadOnlyModelViewSet: only include list and retrieve (No need to define methods manually)
+    ```py
+    from rest_framework import viewsets
+    from .models import Book
+    from .serializers import BookSerializer
+
+    class BookReadOnlyViewSet(viewsets.ReadOnlyModelViewSet):
+        queryset = Book.objects.all()
+        serializer_class = BookSerializer
+    ```
+7. DRF built-in class-based views: Generic views
+    1. Generic views offer a particular functionality
+    ```py
+    from django.contrib.auth.models import User
+    from myapp.serializers import UserSerializer
+    from rest_framework import generics
+    from rest_framework.permissions import IsAdminUser
+
+    class BookList(generics.ListCreateAPIView):
+        queryset = Book.objects.all()
+        serializer_class = BookSerializer
+        # all API calls must be authenticated
+        permission_classes = [IsAdminUser]
+    
+    ```
+    2. other generics class: https://www.django-rest-framework.org/api-guide/generic-views/#concrete-view-classes
+    3. Selectively enable authentication
+    ```py
+    def get_permissions(self):
+        permission_classes = []
+        # anyone will be able to make GET call, but other HTTP methods will require authentication
+        if self.request.method != 'GET':
+            permission_classes = [IsAuthenticated]
+            return [permission() for permission in permission_classes]
+    ```
+    4. Return resources created by the authenticated users only
+    ```py
+    class BookView(generics.ListCreateAPIView):
+        queryset = Book.objects.all()
+        serializer_class = BookSerializer
+        permission_classes = [IsAuthenticated]
+        # override the get_queryset method
+        def get_queryset(self):
+            return Book.objects.all().filter(user=self.request.user)
+    ```
+    5. Override default behavior
+    ```py
+    class BookView(generics.ListCreateAPIView):
+        queryset = Book.objects.all()
+        serializer_class = BookSerializer  
+        def get(self, request, *args, **kwargs):
+            return Response(‘new response’)
+    ```
+
+        
+8. Example: `booklist_api`
+    1. create `booklist_api` app
+    2. add `booklist_api` into settings.py
+    3. add class in models.py
+    4. do migrations
+    5. add BookView and SingleBookView class in views.py
+    6. create serializers.py at app level
+    7. create urls.py at app level
+    8. add path at project level
+
+
+
+9. Django Debug Toolbar
+    1. https://github.com/django-commons/django-debug-toolbar
+
+10. Serializers
+    1. Example: `serializer`
+        1. add class in models.py
+        2. do migrations
+        3. create serializers.py
+        4. add menu_item and single_item function in views.py
+
+    2. Model serializers: Functions identically to the previous Serializers
+        1. Example: `booklist_api`
+            1. edit serializers.py at app level
+
+
+11. relationship serializers
+    1. Example: `booklist_api`
+        1. edit models.py
+            1. to create a link between the databases, you'll need to add data to the new one first.
+            2. add Category class
+            3. do migrations
+            4. add category as a ForeignKey in Book class
+            5. do migrations again
+        2. edit serializers.py
+            1. Method 1: create a related serializer
+            2. Method 2: add depth
+        3. if you use function views, you also need to edit views.py
+        ```py
+        # views.py
+        @api_view()
+        def menu_item(request):
+            item = MenuItem.object.select_related("category").all()
+            serialized_item = MenuItemSerializer(item, many=True)
+            return Response(serialized_item.data)
+        ```
+
+
+12. Deserializers
+    1. Example: `booklist_api`
+        1. edit serializers.py
+            1. add additional write_only variable for POST
+        2. if you use function views, you also need to edit views.py
+        ```py
+        # views.py
+        from rest_framework.response import Response
+        from rest_framework.decorators import api_view
+        from .models import MenuItem
+        from .serializers import MenuItemSerializer
+        from django.shortcuts import get_object_or_404
+        from rest_framework import status
+
+        @api_view(['GET','POST'])
+        # return all menu item
+        def menu_item(request):
+            if request.method == 'GET':
+                item = MenuItem.object.all()
+                serialized_item = MenuItemSerializer(item, many=True)
+                return Response(serialized_item.data)
+            if request.method == 'POST':
+                serialized_item = MenuItemSerializer(data=request.data)
+                serialized_item.is_valid(raise_exception=True)
+                serialized_item.validated_data
+                serialized_item.save()
+                return Response(serialized_item.data, status.HTTP_201_CREATED)
+
+        # return menu item by id
+        def single_item(request, id):
+            # item = MenuItem.object.get(pk=id)
+            item = get_object_or_404(MenuItem, pk=id)
+            serialized_item = MenuItemSerializer(item)
+            return Response(serialized_item.data)
+        ```
+
+13. Renderers
+    1. Change the response renderer by adding/changing `Accept` header
+        1. Example
+        ```bash
+        Accept: application/json
+        Accept: text/html
+        ```
+    2. setting DRF Renderers
+    ```py
+    # settings.py
+    # add
+    REST_FRAMEWORK = {
+        'DEFAULT_RENDERER_CLASSES': [
+            'rest_framework.renderers.JSONRenderer',
+            'rest_framework.renderers.BrowsableAPIRenderer',
+        ]
+    }
+    ```
+    3. other renderer
+        1. `djangorestframework-xml`: `Accept: application/xml`
+        2. `djangorestframework-csv`: `Accept: text/csv`
+        3. `djangorestframework-yaml`: `Accept: application/yaml`
+    ```bash
+    pipenv install djangorestframework-xml
+    pipenv install djangorestframework-csv
+    pipenv install djangorestframework-yaml
+    ```
+    ```py
+    # settings.py
+    # add xml renderer
+    REST_FRAMEWORK = {
+        'DEFAULT_RENDERER_CLASSES': [
+            'rest_framework.renderers.JSONRenderer',
+            'rest_framework.renderers.BrowsableAPIRenderer',
+            'rest_framework_xml.renderers.XMLRenderer',
+            'rest_framework_csv.renderers.CSVRenderer', 
+            'rest_framework_yaml.renderers.YAMLRenderer', 
+        ]
+    }
+    ```
+    4. TemplateHTMLRenderer and StaticHTMLRenderer Example
+    ```py
+    from rest_framework.renderers import TemplateHTMLRenderer, StaticHTMLRenderer
+    from rest_framework.decorators import api_view, renderer_classes
+
+    @api_view() 
+    @renderer_classes ([TemplateHTMLRenderer])
+    def menu(request):
+        items = MenuItem.objects.select_related('category').all()
+        serialized_item = MenuItemSerializer(items, many=True)
+        return Response({'data':serialized_item.data}, template_name='menu-items.html')
+
+    @api_view(['GET'])
+    @renderer_classes([StaticHTMLRenderer])
+    def welcome(request):
+        data = '<html><body><h1>Welcome To Little Lemon API Project</h1></body></html>'
+        return Response(data)
+    ```
